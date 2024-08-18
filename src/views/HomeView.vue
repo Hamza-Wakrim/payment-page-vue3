@@ -52,66 +52,83 @@ const hostedPageStep = async () => {
 </script>
 
 <template>
-  <v-stepper
-    hide-actions
-    alt-labels
-    v-model="step"
-    :items="['Products', 'User Information', 'Checkout']"
-  >
-    <template v-slot:item.1>
-      <!-- Pass the reactive dummyData and handle the emitted event -->
-      <Items :items="dummyData" :data="cartData" @update:data="updateCartData" />
-      <v-card-actions class="justify-end">
-        <v-btn
-          v-if="cartData.checkedItem"
-          variant="outlined"
-          width="14%"
-          color="primary"
-          rounded="lg"
-          @click="nextStep"
-          >Next</v-btn
-        >
-      </v-card-actions>
-    </template>
+  <v-app>
+    <v-app-bar app color="#FAFAFA" dark>
+      <v-col class="pl-4">
+        <v-img
+          src="src/assets/logo.png"
+          alt="Logo"
+          contain
+          width="15%"
+          height="70%"
+          class="mr-3"
+        ></v-img>
+      </v-col>
+    </v-app-bar>
 
-    <template v-slot:item.2>
-      <v-card flat>
-        <!-- Displaying cartData -->
-        <UserInformationPage :data="cartData" />
+    <v-main>
+      <v-stepper
+        hide-actions
+        alt-labels
+        v-model="step"
+        :items="['Products', 'User Information', 'Checkout']"
+      >
+        <template v-slot:item.1>
+          <!-- Pass the reactive dummyData and handle the emitted event -->
+          <Items :items="dummyData" :data="cartData" @update:data="updateCartData" />
+          <v-card-actions class="justify-end">
+            <v-btn
+              v-if="cartData.checkedItem"
+              variant="outlined"
+              width="14%"
+              color="primary"
+              rounded="lg"
+              @click="nextStep"
+              >Next</v-btn
+            >
+          </v-card-actions>
+        </template>
 
-        <v-card-actions class="justify-end">
-          <v-row d-flex class="pt-3">
-            <v-col cols="6">
-              <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
-            </v-col>
-            <v-col cols="6" style="justify-content: end; display: flex">
-              <v-btn
-                v-if="cartData.firstName"
-                variant="outlined"
-                width="50%"
-                color="primary"
-                rounded="lg"
-                @click="hostedPageStep"
-                >Go Checkout</v-btn
-              >
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </template>
+        <template v-slot:item.2>
+          <v-card flat>
+            <!-- Displaying cartData -->
+            <UserInformationPage :data="cartData" />
 
-    <template v-slot:item.3>
-      <v-card flat>
-        <CheckoutPage :data="cartData" />
+            <v-card-actions class="justify-end">
+              <v-row d-flex class="pt-3">
+                <v-col cols="6">
+                  <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
+                </v-col>
+                <v-col cols="6" style="justify-content: end; display: flex">
+                  <v-btn
+                    v-if="cartData.firstName"
+                    variant="outlined"
+                    width="50%"
+                    color="primary"
+                    rounded="lg"
+                    @click="hostedPageStep"
+                    >Go Checkout</v-btn
+                  >
+                </v-col>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </template>
 
-        <v-card-actions class="justify-end">
-          <v-row d-flex class="pt-3">
-            <v-col cols="6">
-              <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-stepper>
+        <template v-slot:item.3>
+          <v-card flat>
+            <CheckoutPage :data="cartData" />
+
+            <v-card-actions class="justify-end">
+              <v-row d-flex class="pt-3">
+                <v-col cols="6">
+                  <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
+                </v-col>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-stepper>
+    </v-main>
+  </v-app>
 </template>
