@@ -3,7 +3,7 @@ import { ref, watch, computed } from 'vue'
 
 const props = defineProps<{
   items: {
-    id: number
+    plan_code: number
     name: string
     price: number
     checked: boolean
@@ -31,7 +31,7 @@ const checkedItemId = ref<number | null>(props.data.checkedItem || null)
 const selectedItem = computed(() => props.items.find((item) => item.id === checkedItemId.value))
 
 watch(checkedItemId, (newId) => {
-  const item = props.items.find((item) => item.id === newId)
+  const item = props.items.find((item) => item.plan_code === newId)
   if (item) {
     emit('update:data', { checkedItem: item, price: item.price })
   }
@@ -51,10 +51,15 @@ const selectItem = (itemId: number) => {
         </template>
         <v-card-text class="flex-grow-2"> </v-card-text>
         <v-card-actions>
-          <v-radio v-model="checkedItemId" :value="item.id" @change="selectItem(item.id)" />
+          <v-radio
+            color="primary"
+            v-model="checkedItemId"
+            :value="item.plan_code"
+            @change="selectItem(item.plan_code)"
+          />
           <v-spacer></v-spacer>
           <h3>
-            <b>$ {{ item.price }}/Month</b>
+            <b>$ {{ item.recurring_price }}/Month</b>
           </h3>
         </v-card-actions>
       </v-card>

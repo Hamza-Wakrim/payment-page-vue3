@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import Items from '../components/Items.vue'
-import { ref, reactive } from 'vue'
+import UserInformationPage from '../components/UserInformationPage.vue'
+import CheckoutPage from '../components/CheckoutPage.vue'
+import { ref, reactive, onMounted } from 'vue'
+import { fetchProducts } from '@/services/productService'
+import { createHostedPage } from '@/services/checkoutService'
 
 const step = ref(1)
-const dummyData = reactive([
-  { id: 1, name: 'Item 1', price: 10, checked: true },
-  { id: 2, name: 'Item 2', price: 10, checked: false },
-  { id: 3, name: 'Item 3', price: 10, checked: false },
-  { id: 4, name: 'Item 4', price: 10, checked: false }
-])
+const dummyData = reactive([])
 const cartData = reactive({
   checkedItem: null as object | null,
   price: null as number | null,
@@ -23,28 +22,42 @@ const cartData = reactive({
   country: null as string | null
 })
 
+onMounted(async () => {
+  try {
+    const products = await fetchProducts()
+    dummyData.push(...products.data)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 // Event handler to update cartData from the child component
-const updateCartData = (newData: { checkedItem: number; price: number }) => {
+const updateCartData = (newData: { checkedItem: object; price: number }) => {
   cartData.checkedItem = newData.checkedItem
   cartData.price = newData.price
 }
 
 const nextStep = () => {
-  if (step.value < 2) step.value += 1
+  if (step.value < 3) step.value += 1
 }
 
 const prevStep = () => {
   if (step.value > 1) step.value -= 1
 }
 
-const finish = () => {
-  alert('Checkout Complete!')
-  // Add any additional actions here (e.g., submitting data to the server)
+const hostedPageStep = async () => {
+  const hostedPage = await createHostedPage(cartData)
+  if (step.value < 3) step.value += 1
 }
 </script>
 
 <template>
-  <v-stepper hide-actions alt-labels v-model="step" :items="['Products', 'Checkout']">
+  <v-stepper
+    hide-actions
+    alt-labels
+    v-model="step"
+    :items="['Products', 'User Information', 'Checkout']"
+  >
     <template v-slot:item.1>
       <!-- Pass the reactive dummyData and handle the emitted event -->
       <Items :items="dummyData" :data="cartData" @update:data="updateCartData" />
@@ -62,20 +75,39 @@ const finish = () => {
     </template>
 
     <template v-slot:item.2>
-      <v-card title="Step Two" flat>
+      <v-card flat>
         <!-- Displaying cartData -->
-        <div>card data: {{ cartData }}</div>
+        <UserInformationPage :data="cartData" />
 
-        <CheckoutPage />
         <v-card-actions class="justify-end">
           <v-row d-flex class="pt-3">
             <v-col cols="6">
               <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
             </v-col>
             <v-col cols="6" style="justify-content: end; display: flex">
-              <v-btn variant="outlined" width="18%" color="primary" rounded="lg" @click="finish"
-                >Finish</v-btn
+              <v-btn
+                v-if="cartData.firstName"
+                variant="outlined"
+                width="50%"
+                color="primary"
+                rounded="lg"
+                @click="hostedPageStep"
+                >Go Checkout</v-btn
               >
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </template>
+
+    <template v-slot:item.3>
+      <v-card flat>
+        <CheckoutPage :data="cartData" />
+
+        <v-card-actions class="justify-end">
+          <v-row d-flex class="pt-3">
+            <v-col cols="6">
+              <v-btn variant="outlined" width="18%" rounded="lg" @click="prevStep">Back</v-btn>
             </v-col>
           </v-row>
         </v-card-actions>

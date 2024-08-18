@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
+import axios from 'axios'
 
 const props = defineProps<{
-  selectedItem: {
+  data: {
     checkedItem: object
     price: number
     firstName: string
@@ -17,26 +18,32 @@ const props = defineProps<{
   }
 }>()
 
-// const emit = defineEmits(['update:data'])
+const iframeUrl = ref(props.data.checkedItem.url)
 
-// const checkedItemId = ref<object | null>(props.data.checkedItem || null)
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+const checkIframeStatus = async () => {
+  // Example: Check some status or endpoint related to the iframe
+  try {
+    const response = await apiClient.get('/authZoho')
+    console.log('worked', response)
+  } catch (error) {
+    console.error('Polling Error:', error)
+  }
+}
 
-// // Computed property for selected item
-// const selectedItem = computed(() => props.items.find((item) => item.id === checkedItemId.value))
-
-// watch(checkedItemId, (newId) => {
-//   const item = props.items.find((item) => item.id === newId)
-//   if (item) {
-//     emit('update:data', { checkedItem: item, price: item.price })
-//   }
-// })
+onMounted(() => {
+  const interval = setInterval(checkIframeStatus, 7000) // Poll every 5 seconds
+  onUnmounted(() => clearInterval(interval))
+})
 </script>
 
 <template>
-  <v-row class="pb-4">
-    <v-col cols="4"> </v-col>
-  </v-row>
-  <v-row class="pb-4">
-    <v-col cols="4"> </v-col>
+  <v-row class="pt-4">
+    <iframe width="100%" height="900px" :src="iframeUrl"></iframe>
   </v-row>
 </template>
