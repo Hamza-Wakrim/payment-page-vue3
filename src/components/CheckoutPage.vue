@@ -43,7 +43,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-row class="pt-4">
-    <iframe width="100%" height="900px" :src="iframeUrl"></iframe>
-  </v-row>
+  <iframe width="100%" height="900px" :src="iframeUrl"></iframe>
 </template>

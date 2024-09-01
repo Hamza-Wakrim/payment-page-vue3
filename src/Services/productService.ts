@@ -1,4 +1,3 @@
-// src/services/productService.ts
 import axios from 'axios'
 
 interface Product {
@@ -23,6 +22,15 @@ export const fetchProducts = async (): Promise<Product[]> => {
     return response.data
   } catch (error) {
     throw new Error('Failed to fetch products')
+  }
+}
+
+export const fetchProduct = async (planCode: string): Promise<Product[]> => {
+  try {
+    const response = await apiClient.get<Product[]>(`/products/${planCode}`)
+    return response.data
+  } catch (error) {
+    throw new Error('Failed to fetch product')
   }
 }
 

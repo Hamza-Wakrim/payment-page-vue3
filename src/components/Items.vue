@@ -25,7 +25,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:data'])
 
-const checkedItemId = ref<number | null>(props.data.checkedItem || null)
+const checkedItemId = ref<number | null>(props?.data?.checkedItem || null)
 
 // Computed property for selected item
 const selectedItem = computed(() => props.items.find((item) => item.id === checkedItemId.value))
