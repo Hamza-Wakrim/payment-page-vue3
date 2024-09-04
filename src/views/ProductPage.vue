@@ -20,7 +20,7 @@ const product = reactive({
   address: null as string | null,
   city: null as string | null,
   state: null as string | null,
-  country: null as string | null
+  country: 'USA' as string | null
 })
 const planCode = route.params.id as string
 
